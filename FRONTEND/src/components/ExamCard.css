@@ -1,0 +1,13 @@
+.exam-card {
+    transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .exam-card:hover {
+    transform: scale(1.2); /* Increase card size on hover */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Add strong shadow */
+    z-index: 10;
+    position: relative;
+  }
+  

@@ -1,0 +1,35 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #4b6cb7, #182848);
+  }
+  
+  .auth-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    width: 350px;
+  }
+  
+  .input-group {
+    margin-bottom: 15px;
+  }
+  
+  .input-group-text {
+    background: #f8f9fa;
+  }
+  
+  .toggle-link {
+    color: #007bff;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .forgot-link {
+    text-decoration: none;
+    color: #007bff;
+  }
+  

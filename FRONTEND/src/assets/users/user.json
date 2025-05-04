@@ -1,0 +1,12 @@
+{
+    "_id": "u123",
+    "name": "Rahul Sharma",
+    "email": "rahul@example.com",
+    "phone": "+918260543210",
+    "password": "1234",  
+    "createdAt": "2025-04-01T10:00:00Z",
+    "role": "student",    
+    "subscriptionStatus": "free", 
+    "premiumExpiry": "2025-07-01T00:00:00Z"
+    
+  }
