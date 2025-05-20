@@ -1,0 +1,97 @@
+[{
+        "_id": "1",
+        "title": "GATE - Computer Science (CS)",
+        "description": "GATE exam for Computer Science and Information Technology.",
+        "subject": "Computer Science",
+        "eligibility": "Bachelor’s degree in Engineering or Science",
+        "examMode": "Online (CBT)",
+        "difficulty": "Moderate to High",
+        "details": {
+          "syllabus": {
+            "link": "https://gate2025.iisc.ac.in/cs-syllabus",
+            "description": "Official GATE CS Syllabus 2025"
+          },
+          "rules": {
+            "link": "https://gate2025.iisc.ac.in/rules",
+            "description": "GATE Exam Rules and Guidelines"
+          },
+          "notesMaterials": {
+            "notesLink": "https://example.com/gate-cs-notes",
+            "materialLink": "https://example.com/gate-cs-study-material",
+            "books": "Introduction to Algorithms by Cormen, Operating Systems by Galvin"
+          }
+        }
+      },
+      {
+        "_id": "2",
+        "title": "GATE - Electronics and Communication (EC)",
+        "description": "GATE exam for Electronics and Communication Engineering.",
+        "subject": "Electronics and Communication",
+        "eligibility": "Bachelor’s degree in Engineering or Science",
+        "examMode": "Online (CBT)",
+        "difficulty": "Moderate to High",
+        "details": {
+          "syllabus": {
+            "link": "https://gate2025.iisc.ac.in/ec-syllabus",
+            "description": "Official GATE EC Syllabus 2025"
+          },
+          "rules": {
+            "link": "https://gate2025.iisc.ac.in/rules",
+            "description": "GATE Exam Rules and Guidelines"
+          },
+          "notesMaterials": {
+            "notesLink": "https://example.com/gate-ec-notes",
+            "materialLink": "https://example.com/gate-ec-study-material",
+            "books": "Microelectronic Circuits by Sedra, Signals and Systems by Oppenheim"
+          }
+        }
+      },
+      {
+        "_id": "3",
+        "title": "GATE - Mechanical Engineering (ME)",
+        "description": "GATE exam for Mechanical Engineering.",
+        "subject": "Mechanical Engineering",
+        "eligibility": "Bachelor’s degree in Engineering or Science",
+        "examMode": "Online (CBT)",
+        "difficulty": "Moderate to High",
+        "details": {
+          "syllabus": {
+            "link": "https://gate2025.iisc.ac.in/me-syllabus",
+            "description": "Official GATE ME Syllabus 2025"
+          },
+          "rules": {
+            "link": "https://gate2025.iisc.ac.in/rules",
+            "description": "GATE Exam Rules and Guidelines"
+          },
+          "notesMaterials": {
+            "notesLink": "https://example.com/gate-me-notes",
+            "materialLink": "https://example.com/gate-me-study-material",
+            "books": "Engineering Mechanics by Beer, Thermodynamics by Cengel"
+          }
+        }
+      },
+      {
+        "_id": "4",
+        "title": "GATE Mock Test - CS",
+        "description": "Practice mock test for GATE Computer Science.",
+        "subject": "Computer Science",
+        "eligibility": "Any registered candidate",
+        "examMode": "Online (Simulated CBT)",
+        "difficulty": "Moderate",
+        "details": {
+          "syllabus": {
+            "link": "https://gate2025.iisc.ac.in/cs-syllabus",
+            "description": "Official GATE CS Syllabus 2025"
+          },
+          "rules": {
+            "link": "https://gate2025.iisc.ac.in/rules",
+            "description": "GATE Exam Rules and Guidelines"
+          },
+          "notesMaterials": {
+            "notesLink": "https://example.com/gate-cs-notes",
+            "materialLink": "https://example.com/gate-cs-study-material",
+            "books": "Introduction to Algorithms by Cormen, Operating Systems by Galvin"
+          }
+        }
+      }
+    ]

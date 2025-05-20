@@ -1,17 +1,16 @@
-
-
 import React from "react";
 
 const SearchBar = ({ searchQuery, setSearchQuery }) => {
-return (
+  return (
     <input
-    type="text"
-    placeholder="Search exams..."
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    className="p-2 border rounded w-full"
+      type="text"
+      className="form-control"
+      placeholder="Search exams..."
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      style={{ maxWidth: "500px" }}
     />
-);
+  );
 };
 
 export default SearchBar;

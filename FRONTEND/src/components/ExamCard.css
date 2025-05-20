@@ -10,4 +10,9 @@
     z-index: 10;
     position: relative;
   }
-  
+  .exam-card {
+  transition: transform 0.2s;
+}
+.exam-card:hover {
+  transform: translateY(-5px);
+}
