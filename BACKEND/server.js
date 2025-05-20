@@ -28,10 +28,7 @@ app.get("/test", (req, res) => {
 
 // MongoDB Connection
 mongoose
-  .connect("mongodb://localhost:27017/examApp", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect("mongodb://localhost:27017/examApp") // Removed deprecated options
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => {
     console.error("MongoDB Connection Error:", err);
@@ -287,7 +284,7 @@ app.get("/mock-exams", verifyToken, async (req, res) => {
   }
 });
 
-// New Routes (placed after verifyToken)
+// Existing Routes
 app.post("/save-exam-result", verifyToken, async (req, res) => {
   const { branch, year, session, score, totalMarks, attempted, correct, incorrect } = req.body;
 
@@ -327,6 +324,238 @@ app.get("/user-profile", verifyToken, async (req, res) => {
   } catch (err) {
     console.error("User Profile Fetch Error:", err);
     res.status(500).json({ error: "Error fetching user profile" });
+  }
+});
+
+// Admin Routes (No Authentication for Testing)
+app.get("/admin/users", async (req, res) => {
+  console.log("GET /admin/users called"); // Added for debugging
+  try {
+    const users = await User.find().select("username email examHistory");
+    res.json(users);
+  } catch (err) {
+    console.error("Admin Users Fetch Error:", err);
+    res.status(500).json({ error: "Error fetching users" });
+  }
+});
+
+// New POST route for admin user creation
+app.post("/admin/users", async (req, res) => {
+  console.log("POST /admin/users called"); // Added for debugging
+  const { username, email, password } = req.body;
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already registered" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ username, email, password: hashedPassword });
+    await user.save();
+    res.status(201).json({ message: "User created successfully", user });
+  } catch (err) {
+    console.error("Admin User Create Error:", err);
+    res.status(500).json({ error: "Error creating user" });
+  }
+});
+
+app.put("/admin/users/:id", async (req, res) => {
+  console.log("PUT /admin/users/:id called"); // Added for debugging
+  const { username, email, password } = req.body;
+  try {
+    const updateData = { username, email };
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json({ message: "User updated successfully", user });
+  } catch (err) {
+    console.error("Admin User Update Error:", err);
+    res.status(500).json({ error: "Error updating user" });
+  }
+});
+
+app.delete("/admin/users/:id", async (req, res) => {
+  console.log("DELETE /admin/users/:id called"); // Added for debugging
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    console.error("Admin User Delete Error:", err);
+    res.status(500).json({ error: "Error deleting user" });
+  }
+});
+
+app.get("/admin/questions", async (req, res) => {
+  console.log("GET /admin/questions called"); // Added for debugging
+  try {
+    const questions = await Question.find().sort({ year: -1, branch: 1, session: 1 });
+    res.json(questions);
+  } catch (err) {
+    console.error("Admin Questions Fetch Error:", err);
+    res.status(500).json({ error: "Error fetching questions" });
+  }
+});
+
+app.post("/admin/questions", async (req, res) => {
+  console.log("POST /admin/questions called"); // Added for debugging
+  try {
+    const questionData = req.body;
+    const question = new Question(questionData);
+    await question.save();
+    res.status(201).json({ message: "Question created successfully", question });
+  } catch (err) {
+    console.error("Admin Question Create Error:", err);
+    res.status(500).json({ error: "Error creating question" });
+  }
+});
+
+app.put("/admin/questions/:id", async (req, res) => {
+  console.log("PUT /admin/questions/:id called"); // Added for debugging
+  try {
+    const question = await Question.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!question) {
+      return res.status(404).json({ error: "Question not found" });
+    }
+    res.json({ message: "Question updated successfully", question });
+  } catch (err) {
+    console.error("Admin Question Update Error:", err);
+    res.status(500).json({ error: "Error updating question" });
+  }
+});
+
+app.delete("/admin/questions/:id", async (req, res) => {
+  console.log("DELETE /admin/questions/:id called"); // Added for debugging
+  try {
+    const question = await Question.findByIdAndDelete(req.params.id);
+    if (!question) {
+      return res.status(404).json({ error: "Question not found" });
+    }
+    res.json({ message: "Question deleted successfully" });
+  } catch (err) {
+    console.error("Admin Question Delete Error:", err);
+    res.status(500).json({ error: "Error deleting question" });
+  }
+});
+
+app.get("/admin/notifications", async (req, res) => {
+  console.log("GET /admin/notifications called"); // Added for debugging
+  try {
+    const notifications = await Notification.find().sort({ createdAt: -1 });
+    res.json(notifications);
+  } catch (err) {
+    console.error("Admin Notifications Fetch Error:", err);
+    res.status(500).json({ error: "Error fetching notifications" });
+  }
+});
+
+app.post("/admin/notifications", async (req, res) => {
+  console.log("POST /admin/notifications called"); // Added for debugging
+  try {
+    const notificationData = req.body;
+    const notification = new Notification(notificationData);
+    await notification.save();
+    res.status(201).json({ message: "Notification created successfully", notification });
+  } catch (err) {
+    console.error("Admin Notification Create Error:", err);
+    res.status(500).json({ error: "Error creating notification" });
+  }
+});
+
+app.put("/admin/notifications/:id", async (req, res) => {
+  console.log("PUT /admin/notifications/:id called"); // Added for debugging
+  try {
+    const notification = await Notification.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!notification) {
+      return res.status(404).json({ error: "Notification not found" });
+    }
+    res.json({ message: "Notification updated successfully", notification });
+  } catch (err) {
+    console.error("Admin Notification Update Error:", err);
+    res.status(500).json({ error: "Error updating notification" });
+  }
+});
+
+app.delete("/admin/notifications/:id", async (req, res) => {
+  console.log("DELETE /admin/notifications/:id called"); // Added for debugging
+  try {
+    const notification = await Notification.findByIdAndDelete(req.params.id);
+    if (!notification) {
+      return res.status(404).json({ error: "Notification not found" });
+    }
+    res.json({ message: "Notification deleted successfully" });
+  } catch (err) {
+    console.error("Admin Notification Delete Error:", err);
+    res.status(500).json({ error: "Error deleting notification" });
+  }
+});
+
+app.get("/admin/exams", async (req, res) => {
+  console.log("GET /admin/exams called"); // Added for debugging
+  try {
+    const exams = await Exam.find();
+    res.json(exams);
+  } catch (err) {
+    console.error("Admin Exams Fetch Error:", err);
+    res.status(500).json({ error: "Error fetching exams" });
+  }
+});
+
+app.post("/admin/exams", async (req, res) => {
+  console.log("POST /admin/exams called"); // Added for debugging
+  try {
+    const examData = req.body;
+    const exam = new Exam(examData);
+    await exam.save();
+    res.status(201).json({ message: "Exam created successfully", exam });
+  } catch (err) {
+    console.error("Admin Exam Create Error:", err);
+    res.status(500).json({ error: "Error creating exam" });
+  }
+});
+
+app.put("/admin/exams/:id", async (req, res) => {
+  console.log("PUT /admin/exams/:id called"); // Added for debugging
+  try {
+    const exam = await Exam.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!exam) {
+      return res.status(404).json({ error: "Exam not found" });
+    }
+    res.json({ message: "Exam updated successfully", exam });
+  } catch (err) {
+    console.error("Admin Exam Update Error:", err);
+    res.status(500).json({ error: "Error updating exam" });
+  }
+});
+
+app.delete("/admin/exams/:id", async (req, res) => {
+  console.log("DELETE /admin/exams/:id called"); // Added for debugging
+  try {
+    const exam = await Exam.findByIdAndDelete(req.params.id);
+    if (!exam) {
+      return res.status(404).json({ error: "Exam not found" });
+    }
+    res.json({ message: "Exam deleted successfully" });
+  } catch (err) {
+    console.error("Admin Exam Delete Error:", err);
+    res.status(500).json({ error: "Error deleting exam" });
   }
 });
 

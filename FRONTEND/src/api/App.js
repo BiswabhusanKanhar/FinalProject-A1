@@ -9,6 +9,11 @@ import AuthPage from "../pages/AuthPage";
 import MockExam from "../components/MockExam/Exam";
 import ErrorBoundary from "../components/ErrorBoundary";
 import Profile from "../pages/Profile";
+import Admin from "../Admin/admin";
+import UserAdmin from "../Admin/users";
+import QuestionAdmin from "../Admin/question";
+import NoticeAdmin from "../Admin/notice";
+import ExamAdmin from "../Admin/exams";
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -31,7 +36,15 @@ function App() {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/mock" element={<MockExam />} />
               <Route path="/mock/:branch/:year" element={<MockExam />} />
-              <Route path="/profile" element={<Profile />} /> {/* Add Profile route */}
+              <Route path="/profile" element={<Profile />} />
+              {/* Admin Routes */}
+              <Route path="/admin" element={<Admin />}>
+                <Route index element={<h2>Welcome to Admin Dashboard</h2>} />
+                <Route path="users" element={<UserAdmin />} />
+                <Route path="questions" element={<QuestionAdmin />} />
+                <Route path="notices" element={<NoticeAdmin />} />
+                <Route path="exams" element={<ExamAdmin />} />
+              </Route>
             </Routes>
           )}
         </Router>
