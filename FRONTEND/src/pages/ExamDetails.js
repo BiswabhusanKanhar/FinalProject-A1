@@ -94,6 +94,7 @@ const ExamDetails = () => {
             {user ? (
               <>
                 <span className="text-white me-3">Welcome, {getFirstName(user.username)}!</span>
+                <Link to="/" className="btn btn-outline-light me-2"> Back to Home </Link>
                 <button className="btn btn-danger" onClick={handleLogout}>
                   Logout
                 </button>
@@ -162,7 +163,7 @@ const ExamDetails = () => {
           <div className="card-body">
             <ul className="list-group list-group-flush">
               <li className="list-group-item">Admit card must be carried to the exam center.</li>
-              <li className="list-group-item">Only non-programmable calculators allowed.</li>
+              <li className="list-group-item">Calculators are not permitted.</li>
               <li className="list-group-item">Duration: 3 hours, 65 questions.</li>
               <li className="list-group-item">
                 <a
@@ -242,7 +243,7 @@ const ExamDetails = () => {
                       <span className="badge bg-warning text-dark mb-2">
                         Premium Batch
                       </span>
-                      <button className="btn btn-outline-primary w-100" disabled>
+                       <button className="btn btn-outline-primary w-100" disabled>
                         Upgrade to Access
                       </button>
                     </div>

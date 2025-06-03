@@ -12,7 +12,7 @@ const Exam = () => {
   const [answers, setAnswers] = useState([]);
   const [markedForReview, setMarkedForReview] = useState([]);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30 * 60);
+  const [timeLeft, setTimeLeft] = useState(180 * 60);
   const [isExamSubmitted, setIsExamSubmitted] = useState(false);
   const [natInputs, setNatInputs] = useState([]);
   const [user, setUser] = useState(null);

@@ -53,7 +53,7 @@ const Profile = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
+        });        
 
         setExamHistory(response.data.examHistory || []);
         setLoading(false);
@@ -107,7 +107,8 @@ const Profile = () => {
           <div className="ms-auto">
             {user && (
               <>
-                <span className="text-white me-3">Welcome, {getFirstName(user.username)}!</span>
+                <span className="text-white me-3">Welcome, {getFirstName(user.username)}!</span>                
+                <a href="/" className="btn btn-outline-light me-2"> Back to Home </a>                
                 <button className="btn btn-danger" onClick={handleLogout}>
                   Logout
                 </button>
@@ -129,7 +130,7 @@ const Profile = () => {
           <h2 className="card-title">User Details</h2>
           <p><strong>Username:</strong> {user?.username || "N/A"}</p>
           <p><strong>Email:</strong> {user?.email || "N/A"}</p>
-          <p><strong>Plan:</strong> Free</p>
+          <p><strong>Plan:</strong> {user?.plan || "N/A"}</p>
         </div>
       </div>
 
