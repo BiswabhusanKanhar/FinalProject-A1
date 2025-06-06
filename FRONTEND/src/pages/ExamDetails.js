@@ -9,6 +9,7 @@ const ExamDetails = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
+  
   const currentYear = new Date().getFullYear();
   const previousYear = currentYear - 1;
   const olderYears = [2023, 2022, 2021];
@@ -243,9 +244,17 @@ const ExamDetails = () => {
                       <span className="badge bg-warning text-dark mb-2">
                         Premium Batch
                       </span>
-                       <button className="btn btn-outline-primary w-100" disabled>
-                        Upgrade to Access
-                      </button>
+                       {JSON.parse(localStorage.getItem("user"))?.plan === "premium" ? (
+                            <Link to={`/mock/${branch}/${previousYear}`} className="btn btn-primary w-100" >
+                                Start Mock
+                            </Link>
+                        ) : (
+                            <button className="btn btn-outline-primary w-100" disabled>
+                                Upgrade to Access
+                            </button>
+                        )}
+
+
                     </div>
                   </div>
                 </div>
@@ -289,8 +298,11 @@ const ExamDetails = () => {
             )}
           </div>
           <div className="card-footer text-center bg-light">
-            <button className="btn btn-success">Register Now</button>
+              <a href="https://goaps.iitr.ac.in/login" target="_blank" rel="noopener noreferrer">
+              <button className="btn btn-success">Register Now</button>
+            </a>
           </div>
+
         </div>
       </div>
     </div>

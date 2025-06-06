@@ -2,6 +2,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Exam.css";
+import CalculatorModal from "./CalculatorModal"; // adjust path if needed
+import "./CalculatorModal.css"; // make sure the styling is applied
+
+
 
 const Exam = () => {
   const { branch, year } = useParams();
@@ -23,6 +27,8 @@ const Exam = () => {
     incorrect: 0,
     totalMarks: 0,
   });
+  const [showCalculator, setShowCalculator] = useState(false);
+
   const navigate = useNavigate();
 
   // Fetch user data and validate token
@@ -408,7 +414,12 @@ const Exam = () => {
             <span className="question-marks">
               {q.marks} Mark{q.marks > 1 ? "s" : ""}
             </span>
-          </div>
+            <button onClick={() => setShowCalculator(true)} className="btn btn-secondary">
+  Calculator
+</button>
+{showCalculator && <CalculatorModal onClose={() => setShowCalculator(false)} />}
+
+            </div>
           <div className="question-status-indicator">
             <div className={`status-dot ${getQuestionStatus(currentQuestion)}`}></div>
             <span>{getQuestionStatus(currentQuestion).toUpperCase()}</span>
@@ -479,6 +490,7 @@ const Exam = () => {
           </div>
         </div>
       </div>
+      
     );
   };
 
@@ -488,7 +500,7 @@ const Exam = () => {
     setNatInputs(new Array(questionsData.length).fill(""));
     setScore(0);
     setCurrentQuestion(0);
-    setTimeLeft(30 * 60);
+    setTimeLeft(180 * 60);
     setIsExamSubmitted(false);
     setResultsHtml("");
     setResultsSummary({ attempted: 0, correct: 0, incorrect: 0, totalMarks: 0 });
@@ -588,6 +600,7 @@ const Exam = () => {
                     <span>Unanswered:</span>
                     <span>{questionsData.length - resultsSummary.attempted}</span>
                   </div>
+                  
                 </div>
               </div>
               <div

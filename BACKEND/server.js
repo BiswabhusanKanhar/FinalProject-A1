@@ -53,6 +53,7 @@ const UserSchema = new mongoose.Schema({
       incorrect: { type: Number, required: false },
     },
   ],
+  plan: { type: String, required: true, enum: ["free", "premium"], default: "free", trim: true }
 });
 
 const User = mongoose.model("User", UserSchema);
@@ -201,7 +202,7 @@ app.post("/login", validateLogin, async (req, res) => {
     res.json({
       message: "Login successful",
       token,
-      user: { email: user.email, username: user.username },
+      user: { email: user.email, username: user.username, plan: user.plan },
     });
   } catch (err) {
     console.error("Login Error:", err);
