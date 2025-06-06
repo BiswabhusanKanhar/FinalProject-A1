@@ -26,10 +26,63 @@ const Exam = () => {
     correct: 0,
     incorrect: 0,
     totalMarks: 0,
+    rank: 0
   });
   const [showCalculator, setShowCalculator] = useState(false);
 
   const navigate = useNavigate();
+
+  //rank estimation data insertion
+  const rankData = {
+    "Computer Science": [
+     [90, 1], [80, 50], [70, 250], [60, 800], [50, 2000], [40, 5000], [30, 10000]
+    ],
+    "Mechanical Engineering": [
+      [85, 1], [75, 100], [65, 500], [55, 1500], [45, 4000], [35, 8000], [25, 15000]
+    ],
+    "Electronics and Communication": [
+      [80, 1], [70, 80], [60, 400], [50, 1200], [40, 3500], [30, 9000], [25, 18000]
+    ],
+    "Electrical Engineering": [
+      [88, 1], [78, 90], [68, 450], [58, 1300], [48, 3800], [38, 9500], [28, 20000]
+    ],
+    "Civil Engineering": [
+      [82, 1], [72, 120], [62, 600], [52, 1800], [42, 4500], [32, 10000], [22, 22000]
+    ]
+  };
+  //rank estimation function
+  function estimateRank(branch, marks) {
+  if (!rankData[branch]) return null;
+
+  const data = rankData[branch].sort((a, b) => b[0] - a[0]);
+
+  for (let i = 0; i < data.length - 1; i++) {
+    const marksUpper = data[i][0];
+    const rankLower = data[i][1];
+    const marksLower = data[i + 1][0];
+    const rankUpper = data[i + 1][1];
+
+    if (marks <= marksUpper && marks >= marksLower) {
+      const rank = rankLower + ((marksUpper - marks) / (marksUpper - marksLower)) *
+        (rankUpper - rankLower);
+      return Math.floor(rank);
+    }
+  }
+
+  // If marks < minimum range, return worst rank (no extrapolation)
+  const [lowestMarks, lowestRank] = data[data.length - 1];
+  if (marks < lowestMarks) {
+    return lowestRank;
+  }
+
+  // If marks >= top score, return best rank
+  if (marks >= data[0][0]) return data[0][1];
+
+  return null;
+}
+
+
+
 
   // Fetch user data and validate token
   useEffect(() => {
@@ -86,6 +139,14 @@ const Exam = () => {
     let correct = 0;
     let incorrect = 0;
     const totalMarks = questionsData.reduce((sum, q) => sum + q.marks, 0);
+    const branchMap = {
+          CS: "Computer Science",
+          ME: "Mechanical Engineering",
+          EC: "Electronics and Communication",
+          EE: "Electrical Engineering",
+          CE: "Civil Engineering"
+      };
+    const fullBranchName = branchMap[branch] || branch;
 
     questionsData.forEach((q, index) => {
       let isCorrect = false;
@@ -159,7 +220,13 @@ const Exam = () => {
           }
         </div>
       `;
+      // Optional: Map short code to full branch name
+      
+      
     });
+    
+    //rank calculation function
+     const rank = estimateRank(fullBranchName, calculatedScore);
 
     setScore(calculatedScore.toFixed(2));
     setResultsHtml(summaryHTML);
@@ -168,6 +235,7 @@ const Exam = () => {
       correct,
       incorrect,
       totalMarks,
+      rank
     });
 
     // Save exam results to backend
@@ -189,6 +257,7 @@ const Exam = () => {
           attempted,
           correct,
           incorrect,
+          rank
         },
         {
           headers: {
@@ -503,7 +572,7 @@ const Exam = () => {
     setTimeLeft(180 * 60);
     setIsExamSubmitted(false);
     setResultsHtml("");
-    setResultsSummary({ attempted: 0, correct: 0, incorrect: 0, totalMarks: 0 });
+    setResultsSummary({ attempted: 0, correct: 0, incorrect: 0, totalMarks: 0, rank: 0 });
   };
 
   const handleQuestionClick = (index) => {
@@ -572,8 +641,18 @@ const Exam = () => {
                       {score} / {resultsSummary.totalMarks}
                     </div>
                     <div className="score-percentage">
-                      {((score / resultsSummary.totalMarks) * 100).toFixed(2)}%
-                    </div>
+  {((score / resultsSummary.totalMarks) * 100).toFixed(2)}%
+  <br />
+  {JSON.parse(localStorage.getItem("user"))?.plan === "premium" ? (
+    <>Rank: {resultsSummary.rank}</>
+  ) : (
+    <span style={{ color: "gold", fontStyle: "italic" }}>
+      Upgrade to Premium to see your Rank
+    </span>
+  )}
+</div>
+
+
                   </div>
                 </div>
               </div>

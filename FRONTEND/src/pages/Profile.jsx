@@ -152,6 +152,7 @@ const Profile = () => {
                     <th>Correct</th>
                     <th>Incorrect</th>
                     <th>Percentage</th>
+                    <th>Rank</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -167,6 +168,16 @@ const Profile = () => {
                       <td>{exam.correct || "N/A"}</td>
                       <td>{exam.incorrect || "N/A"}</td>
                       <td>{((exam.score / exam.totalMarks) * 100).toFixed(2)}%</td>
+                      <td>
+                          {user?.plan === "premium" ? (exam.rank || "N/A"
+
+                          ) : (
+                              <span style={{ color: "gold", fontStyle: "italic" }}>
+                               Please Upgrade to Premium
+                              </span>
+                          )}
+                      </td>
+
                     </tr>
                   ))}
                 </tbody>

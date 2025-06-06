@@ -51,6 +51,7 @@ const UserSchema = new mongoose.Schema({
       attempted: { type: Number, required: false },
       correct: { type: Number, required: false },
       incorrect: { type: Number, required: false },
+      rank: { type: Number, default: 0, required: true}
     },
   ],
   plan: { type: String, required: true, enum: ["free", "premium"], default: "free", trim: true }
@@ -287,7 +288,7 @@ app.get("/mock-exams", verifyToken, async (req, res) => {
 
 // Existing Routes
 app.post("/save-exam-result", verifyToken, async (req, res) => {
-  const { branch, year, session, score, totalMarks, attempted, correct, incorrect } = req.body;
+  const { branch, year, session, score, totalMarks, attempted, correct, incorrect, rank } = req.body;
 
   try {
     const user = await User.findById(req.userId);
@@ -305,6 +306,7 @@ app.post("/save-exam-result", verifyToken, async (req, res) => {
       attempted,
       correct,
       incorrect,
+      rank
     });
 
     await user.save();
