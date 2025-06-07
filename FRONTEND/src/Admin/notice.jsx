@@ -19,7 +19,12 @@ const NoticeAdmin = () => {
 
   const fetchNotices = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/admin/notifications");
+      const token = localStorage.getItem('token'); // Retrieve token
+      const response = await axios.get("http://localhost:5001/admin/notifications", {
+        headers: {
+          Authorization: `Bearer ${token}` // Attach token
+        }
+      });
       setNotices(response.data);
       setLoading(false);
     } catch (err) {

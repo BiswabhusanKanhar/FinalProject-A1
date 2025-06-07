@@ -54,7 +54,8 @@ const UserSchema = new mongoose.Schema({
       rank: { type: Number, default: 0, required: true}
     },
   ],
-  plan: { type: String, required: true, enum: ["free", "premium"], default: "free", trim: true }
+  plan: { type: String, required: false, enum: ["free", "premium"], default: "free", trim: true },
+  role: { type: String, required: true, enum: ["admin", "regular user"], default: "regular user", trim: true}
 });
 
 const User = mongoose.model("User", UserSchema);
@@ -135,7 +136,7 @@ const validateLogin = [
 ];
 
 // Token Verification Middleware
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   const token = req.headers["authorization"];
   console.log("Authorization Header:", token);
   if (!token) return res.status(403).json({ error: "No token provided" });
@@ -145,14 +146,45 @@ const verifyToken = (req, res, next) => {
     console.log("Bearer Token:", bearerToken);
     const decoded = jwt.verify(bearerToken, SECRET_KEY);
     console.log("Decoded Token:", decoded);
-    req.userId = decoded.id;
-    req.userEmail = decoded.email;
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+    req.user = user; // Attach full user object to request
     next();
   } catch (err) {
     console.error("Token Verification Error:", err.message);
     res.status(401).json({ error: "Unauthorized", details: err.message });
   }
 };
+
+// Admin Role Middleware
+const adminMiddleware = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ error: "Admin access required" });
+  }
+  next();
+};
+
+
+// Home Page Route
+app.get("/", verifyToken, async (req, res) => {
+  try {
+    const user = req.user; // From verifyToken middleware
+    res.json({
+      message: "Welcome to the Exam App Home Page!",
+      user: {
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        plan: user.plan,
+      },
+    });
+  } catch (err) {
+    console.error("Home Page Fetch Error:", err);
+    res.status(500).json({ error: "Error loading home page" });
+  }
+});
 
 // Authentication Routes
 app.post("/signup", validateSignup, async (req, res) => {
@@ -195,15 +227,15 @@ app.post("/login", validateLogin, async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user._id, email: user.email, role: user.role },
       SECRET_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
     res.json({
       message: "Login successful",
       token,
-      user: { email: user.email, username: user.username, plan: user.plan },
+      user: { email: user.email, username: user.username, plan: user.plan, role: user.role },
     });
   } catch (err) {
     console.error("Login Error:", err);
@@ -291,7 +323,7 @@ app.post("/save-exam-result", verifyToken, async (req, res) => {
   const { branch, year, session, score, totalMarks, attempted, correct, incorrect, rank } = req.body;
 
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -319,7 +351,7 @@ app.post("/save-exam-result", verifyToken, async (req, res) => {
 
 app.get("/user-profile", verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select("username email examHistory");
+    const user = await User.findById(req.user._id).select("username email examHistory");
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -330,11 +362,11 @@ app.get("/user-profile", verifyToken, async (req, res) => {
   }
 });
 
-// Admin Routes (No Authentication for Testing)
-app.get("/admin/users", async (req, res) => {
+// Admin Routes (Protected with Authentication and Admin Role)
+app.get("/admin/users", verifyToken, adminMiddleware, async (req, res) => {
   console.log("GET /admin/users called"); // Added for debugging
   try {
-    const users = await User.find().select("username email examHistory");
+    const users = await User.find().select("username email plan examHistory");
     res.json(users);
   } catch (err) {
     console.error("Admin Users Fetch Error:", err);
@@ -343,29 +375,39 @@ app.get("/admin/users", async (req, res) => {
 });
 
 // New POST route for admin user creation
-app.post("/admin/users", async (req, res) => {
+app.post("/admin/users", verifyToken, adminMiddleware, async (req, res) => {
   console.log("POST /admin/users called"); // Added for debugging
-  const { username, email, password } = req.body;
+  const { username, email, password, plan } = req.body; 
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: "Email already registered" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, email, password: hashedPassword });
-    await user.save();
-    res.status(201).json({ message: "User created successfully", user });
+        // Create new user instance
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword, // Use the hashed password
+      plan: plan || "free", // Fallback to "free" if not provided
+    });
+
+    // Save the user to the database
+    await newUser.save();
+
+    // Respond with success
+    res.status(201).json({ message: "User created successfully", user: newUser });
   } catch (err) {
     console.error("Admin User Create Error:", err);
     res.status(500).json({ error: "Error creating user" });
   }
 });
 
-app.put("/admin/users/:id", async (req, res) => {
+app.put("/admin/users/:id", verifyToken, adminMiddleware, async (req, res) => {
   console.log("PUT /admin/users/:id called"); // Added for debugging
-  const { username, email, password } = req.body;
+  const { username, email, password, plan } = req.body;
   try {
-    const updateData = { username, email };
+    const updateData = { username, email, plan };
     if (password) {
       updateData.password = await bcrypt.hash(password, 10);
     }
@@ -383,7 +425,7 @@ app.put("/admin/users/:id", async (req, res) => {
   }
 });
 
-app.delete("/admin/users/:id", async (req, res) => {
+app.delete("/admin/users/:id", verifyToken, adminMiddleware, async (req, res) => {
   console.log("DELETE /admin/users/:id called"); // Added for debugging
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -397,7 +439,7 @@ app.delete("/admin/users/:id", async (req, res) => {
   }
 });
 
-app.get("/admin/questions", async (req, res) => {
+app.get("/admin/questions", verifyToken, adminMiddleware, async (req, res) => {
   console.log("GET /admin/questions called"); // Added for debugging
   try {
     const questions = await Question.find().sort({ year: -1, branch: 1, session: 1 });
@@ -408,7 +450,7 @@ app.get("/admin/questions", async (req, res) => {
   }
 });
 
-app.post("/admin/questions", async (req, res) => {
+app.post("/admin/questions", verifyToken, adminMiddleware, async (req, res) => {
   console.log("POST /admin/questions called"); // Added for debugging
   try {
     const questionData = req.body;
@@ -421,7 +463,7 @@ app.post("/admin/questions", async (req, res) => {
   }
 });
 
-app.put("/admin/questions/:id", async (req, res) => {
+app.put("/admin/questions/:id", verifyToken, adminMiddleware, async (req, res) => {
   console.log("PUT /admin/questions/:id called"); // Added for debugging
   try {
     const question = await Question.findByIdAndUpdate(req.params.id, req.body, {
@@ -438,7 +480,7 @@ app.put("/admin/questions/:id", async (req, res) => {
   }
 });
 
-app.delete("/admin/questions/:id", async (req, res) => {
+app.delete("/admin/questions/:id", verifyToken, adminMiddleware, async (req, res) => {
   console.log("DELETE /admin/questions/:id called"); // Added for debugging
   try {
     const question = await Question.findByIdAndDelete(req.params.id);
@@ -452,7 +494,7 @@ app.delete("/admin/questions/:id", async (req, res) => {
   }
 });
 
-app.get("/admin/notifications", async (req, res) => {
+app.get("/admin/notifications", verifyToken, adminMiddleware, async (req, res) => {
   console.log("GET /admin/notifications called"); // Added for debugging
   try {
     const notifications = await Notification.find().sort({ createdAt: -1 });
@@ -463,7 +505,7 @@ app.get("/admin/notifications", async (req, res) => {
   }
 });
 
-app.post("/admin/notifications", async (req, res) => {
+app.post("/admin/notifications", verifyToken, adminMiddleware, async (req, res) => {
   console.log("POST /admin/notifications called"); // Added for debugging
   try {
     const notificationData = req.body;
@@ -476,7 +518,7 @@ app.post("/admin/notifications", async (req, res) => {
   }
 });
 
-app.put("/admin/notifications/:id", async (req, res) => {
+app.put("/admin/notifications/:id", verifyToken, adminMiddleware, async (req, res) => {
   console.log("PUT /admin/notifications/:id called"); // Added for debugging
   try {
     const notification = await Notification.findByIdAndUpdate(req.params.id, req.body, {
@@ -493,7 +535,7 @@ app.put("/admin/notifications/:id", async (req, res) => {
   }
 });
 
-app.delete("/admin/notifications/:id", async (req, res) => {
+app.delete("/admin/notifications/:id", verifyToken, adminMiddleware, async (req, res) => {
   console.log("DELETE /admin/notifications/:id called"); // Added for debugging
   try {
     const notification = await Notification.findByIdAndDelete(req.params.id);
@@ -507,7 +549,7 @@ app.delete("/admin/notifications/:id", async (req, res) => {
   }
 });
 
-app.get("/admin/exams", async (req, res) => {
+app.get("/admin/exams", verifyToken, adminMiddleware, async (req, res) => {
   console.log("GET /admin/exams called"); // Added for debugging
   try {
     const exams = await Exam.find();
@@ -518,7 +560,7 @@ app.get("/admin/exams", async (req, res) => {
   }
 });
 
-app.post("/admin/exams", async (req, res) => {
+app.post("/admin/exams", verifyToken, adminMiddleware, async (req, res) => {
   console.log("POST /admin/exams called"); // Added for debugging
   try {
     const examData = req.body;
@@ -531,7 +573,7 @@ app.post("/admin/exams", async (req, res) => {
   }
 });
 
-app.put("/admin/exams/:id", async (req, res) => {
+app.put("/admin/exams/:id", verifyToken, adminMiddleware, async (req, res) => {
   console.log("PUT /admin/exams/:id called"); // Added for debugging
   try {
     const exam = await Exam.findByIdAndUpdate(req.params.id, req.body, {
@@ -548,7 +590,7 @@ app.put("/admin/exams/:id", async (req, res) => {
   }
 });
 
-app.delete("/admin/exams/:id", async (req, res) => {
+app.delete("/admin/exams/:id", verifyToken, adminMiddleware, async (req, res) => {
   console.log("DELETE /admin/exams/:id called"); // Added for debugging
   try {
     const exam = await Exam.findByIdAndDelete(req.params.id);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "axios"; // Reintroduced axios import
 import "./AuthPage.css";
 
 const AuthPage = () => {
@@ -52,7 +52,13 @@ const AuthPage = () => {
 
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
-        navigate("/");
+                // Redirect based on role
+        const user = response.data.user;
+        if (user.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }
     } catch (err) {
       console.error("Auth Error:", err.response?.status, err.response?.data || err.message);

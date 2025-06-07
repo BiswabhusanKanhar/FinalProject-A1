@@ -16,7 +16,8 @@ const Profile = () => {
       try {
         const token = localStorage.getItem("token");
         const storedUser = localStorage.getItem("user");
-
+            console.log("Token:", token); // Debug: Check token
+      console.log("Stored User:", storedUser); // Debug: Check user data
         if (!token || !storedUser) {
           console.warn("No token or user found, redirecting to login");
           navigate("/auth?type=login");
@@ -49,17 +50,23 @@ const Profile = () => {
 
         // Fetch exam history from backend
         const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5001";
+        console.log("API URL:", apiUrl);
         const response = await axios.get(`${apiUrl}/user-profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });        
+        console.log("Response Data:", response.data); // Debug: See full response
 
         setExamHistory(response.data.examHistory || []);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching user profile:", err);
-        setError("Failed to fetch profile data. Please try again.");
+          console.log("Response Status:", err.response?.status); // Debug: Status code
+          console.log("Response Data:", err.response?.data); // Debug: Server message
+          const errorMessage = err.response?.data?.error || err.message || "Unknown error";
+
+        setError(`Failed to fetch profile data. ${errorMessage}`);
         setLoading(false);
         if (err.response?.status === 401) {
           console.warn("Unauthorized, redirecting to login");

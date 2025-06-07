@@ -12,7 +12,7 @@ const ExamDetails = () => {
   
   const currentYear = new Date().getFullYear();
   const previousYear = currentYear - 1;
-  const olderYears = [2023, 2022, 2021];
+  const olderYears = [2024, 2023, 2022, 2021];
 
   // Fetch user data and validate token
   useEffect(() => {
@@ -74,6 +74,8 @@ const ExamDetails = () => {
     if (subject.includes("Computer Science")) return "CS";
     if (subject.includes("Electronics and Communication")) return "EC";
     if (subject.includes("Mechanical Engineering")) return "ME";
+    if (subject.includes("Civil Engineering")) return "CE";
+    if (subject.includes("Electrical Engineering")) return "EE";
     return subject.toUpperCase().substring(0, 2);
   };
 
@@ -220,7 +222,7 @@ const ExamDetails = () => {
                 <div className="card border-primary">
                   <div className="card-body text-center">
                     <h5 className="card-title text-primary fw-bold">
-                      {previousYear} Mock Test
+                      {currentYear} Mock Test
                     </h5>
                     <p className="card-text">Available for free!</p>
                     <Link
@@ -245,7 +247,7 @@ const ExamDetails = () => {
                         Premium Batch
                       </span>
                        {JSON.parse(localStorage.getItem("user"))?.plan === "premium" ? (
-                            <Link to={`/mock/${branch}/${previousYear}`} className="btn btn-primary w-100" >
+                            <Link to={`/mock/${branch}/${year}`} className="btn btn-primary w-100" >
                                 Start Mock
                             </Link>
                         ) : (

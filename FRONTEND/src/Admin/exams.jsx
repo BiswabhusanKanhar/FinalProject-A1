@@ -28,7 +28,12 @@ const ExamAdmin = () => {
 
   const fetchExams = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/admin/exams");
+      const token = localStorage.getItem('token'); // Retrieve token
+      const response = await axios.get("http://localhost:5001/admin/exams", {
+        headers: {
+          Authorization: `Bearer ${token}` // Attach token
+        }
+      });
       setExams(response.data);
       setLoading(false);
     } catch (err) {

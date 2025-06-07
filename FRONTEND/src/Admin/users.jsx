@@ -10,6 +10,7 @@ const UserAdmin = () => {
     username: "",
     email: "",
     password: "",
+    plan: "free"
   });
   const [editId, setEditId] = useState(null);
 
@@ -20,8 +21,14 @@ const UserAdmin = () => {
   const fetchUsers = async () => {
     console.log("Fetching users from http://localhost:5001/admin/users"); // Added for debugging
     try {
-      const response = await axios.get("http://localhost:5001/admin/users");
+      const token = localStorage.getItem('token'); // Or wherever you store the token
+      const response = await axios.get("http://localhost:5001/admin/users",{
+      headers: {
+        Authorization: `Bearer ${token}` // Add token to headers
+      }
+    });
       console.log("Users received:", response.data); // Added for debugging
+      
       setUsers(response.data);
       setLoading(false);
     } catch (err) {
@@ -57,6 +64,7 @@ const UserAdmin = () => {
       username: user.username,
       email: user.email,
       password: "",
+      plan: user.plan || "free" // Ensure plan is set, default to "free" if missing
     });
     setEditId(user._id);
   };
@@ -77,6 +85,7 @@ const UserAdmin = () => {
       username: "",
       email: "",
       password: "",
+      plan: "free" // Reset to default
     });
     setEditId(null);
   };
@@ -121,6 +130,20 @@ const UserAdmin = () => {
             required={!editId}
           />
         </div>
+        <div className="mb-3">
+          <label>Plan</label>
+          <select
+                  name="plan"
+                  value={formData.plan}
+                  onChange={handleInputChange}
+                  className="form-control"
+                  required
+                >
+          <option value="free">"free"</option>
+          <option value="premium">"premium"</option>
+          </select>
+        </div>
+
         <div>
           <button type="submit" className="btn btn-primary me-2">
             {editId ? "Update User" : "Add User"}
@@ -137,6 +160,7 @@ const UserAdmin = () => {
           <tr>
             <th>Username</th>
             <th>Email</th>
+            <th>Plan</th>
             <th>Exam History</th>
             <th>Actions</th>
           </tr>
@@ -146,6 +170,7 @@ const UserAdmin = () => {
             <tr key={user._id}>
               <td>{user.username}</td>
               <td>{user.email}</td>
+              <td>{user.plan || "free"}</td>
               <td>{user.examHistory.length} exams</td>
               <td>
                 <button

@@ -30,7 +30,12 @@ const QuestionAdmin = () => {
 
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/admin/questions");
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:5001/admin/questions",{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
       setQuestions(response.data);
       setLoading(false);
     } catch (err) {
