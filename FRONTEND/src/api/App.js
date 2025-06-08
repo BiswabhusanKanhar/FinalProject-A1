@@ -14,6 +14,7 @@ import UserAdmin from "../Admin/users";
 import QuestionAdmin from "../Admin/question";
 import NoticeAdmin from "../Admin/notice";
 import ExamAdmin from "../Admin/exams";
+import PaymentPage from "../pages/PaymentPage"; 
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -37,6 +38,7 @@ function App() {
               <Route path="/mock" element={<MockExam />} />
               <Route path="/mock/:branch/:year" element={<MockExam />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/payment" element={<PaymentPage />} />
               {/* Admin Routes */}
               <Route path="/admin" element={<Admin />}>
                 <Route index element={<h2>Welcome to Admin Dashboard</h2>} />

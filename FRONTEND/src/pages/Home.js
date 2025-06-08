@@ -210,57 +210,56 @@ useEffect(() => {
           </div>
         </div>
       </div>
-      <div className="mt-5 text-center">
-  <h2 className="mb-4">Free vs Premium Features</h2>
-  <div className="row justify-content-center">
-    <div className="col-md-5">
-      <div className="card border-success mb-3">
-        <div className="card-header bg-success text-white">Free Features</div>
-        <div className="card-body text-start">
-          <ul>
-            <li>GATE eligibility criteria</li>
-            <li>Latest year PYQs</li>
-            <li>Links to apply</li>
-            <li>GATE paper pattern & syllabus</li>
-            <li>Mock Test of Latest year PYQ</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+      <div className="container mt-5">
+  <h2 className="text-center mb-4">Subscription Plans</h2>
+  <div className="table-responsive">
+    <table className="table table-bordered text-center align-middle">
+      <thead className="table-light">
+        <tr>
+          <th className="text-start">Benefits</th>
+          <th className="text-primary fw-bold">Free</th>
+          <th className="text-warning fw-bold">Premium</th>
+        </tr>
+      </thead>
+      <tbody>
+        {[
+          "GATE eligibility criteria",
+          "Latest year PYQs",
+          "Links to apply",
+          "GATE paper pattern & syllabus",
+          "Mock Test of Latest year PYQ",
+          "Full PYQ collection (multiple years)",
+          "Mock tests with scoring (multiple years)",
+          "View personal ranking & progress",
 
-    <div className="col-md-5">
-      <div className="card border-primary mb-3">
-        <div className="card-header bg-primary text-white">Premium Features</div>
-        <div className="card-body text-start">
-          <ul>
-            <li>GATE eligibility criteria</li>
-            <li>Latest year PYQs</li>
-            <li>Links to apply</li>
-            <li>GATE paper pattern & syllabus</li>
-            <li>Mock Test of Latest year PYQ</li>
-            <li>Full PYQ collection (multiple years)</li>
-            <li>Mock tests with scoring</li>
-            <li>Performance-based motivational prompts</li>
-          </ul>
-          <div className="text-center mt-3">
-            
-             
-            <h5 class="h5_variant aquilla-typography typography styledTypo css-ixwbo6">₹ 199 / month </h5>
-            
-            <a
-              href="https://your-payment-gateway-link.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-warning"
-            >
-              Upgrade to Premium
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
+        ].map((feature, index) => (
+          <tr key={index}>
+            <td className="text-start">{feature}</td>
+            <td>{index < 5 ? "✔️" : "❌"}</td>
+            <td>✔️</td>
+          </tr>
+        ))}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td></td>
+          <td>
+            <span className="fw-bold">Free</span>
+          </td>
+          <td>
+            <div className="d-flex flex-column align-items-center">
+              <h5 className="text-warning mb-2">₹199 / month</h5>
+              <Link to="/payment" className="btn btn-warning">
+                Upgrade to Premium
+              </Link>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
   </div>
 </div>
+
 
 
     </div>
