@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import "./Exam.css";
 import CalculatorModal from "./CalculatorModal"; // adjust path if needed
@@ -641,16 +642,16 @@ const Exam = () => {
                       {score} / {resultsSummary.totalMarks}
                     </div>
                     <div className="score-percentage">
-  {((score / resultsSummary.totalMarks) * 100).toFixed(2)}%
-  <br />
-  {JSON.parse(localStorage.getItem("user"))?.plan === "premium" ? (
-    <>Rank: {resultsSummary.rank}</>
-  ) : (
-    <span style={{ color: "gold", fontStyle: "italic" }}>
-      Upgrade to Premium to see your Rank
-    </span>
-  )}
-</div>
+                        {((score / resultsSummary.totalMarks) * 100).toFixed(2)}%
+                         <br />
+                        {JSON.parse(localStorage.getItem("user"))?.plan === "premium" ? (
+                        <>Rank: {resultsSummary.rank}</>
+                        ) : (
+                            <span style={{ color: "gold", fontStyle: "italic" }}>
+                                Upgrade to Premium to see your Rank
+                            </span>
+                        )}
+                      </div>
 
 
                   </div>
@@ -686,9 +687,18 @@ const Exam = () => {
                 className="results-summary"
                 dangerouslySetInnerHTML={{ __html: resultsHtml }}
               />
-              <button className="btn btn-primary retry-button" onClick={resetExam}>
-                Try Again
-              </button>
+              <div className="result-actions">
+                  <button className="btn btn-primary retry-button" onClick={resetExam}>
+                    Try Again
+                  </button>
+                  <Link to="/profile" className="btn btn-outline-info mx-2">
+                      Go to Profile
+                  </Link>
+                  <Link to="/" className="btn btn-outline-secondary">
+                      Back to Home
+                  </Link>
+              </div>
+
             </div>
           )}
         </div>
