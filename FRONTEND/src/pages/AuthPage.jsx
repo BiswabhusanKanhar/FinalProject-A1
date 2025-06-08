@@ -57,7 +57,7 @@ const AuthPage = () => {
         if (user.role === "admin") {
           navigate("/admin");
         } else {
-          navigate("/");
+          navigate("/");//redirect to home page
         }
       }
     } catch (err) {

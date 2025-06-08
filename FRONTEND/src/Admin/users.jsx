@@ -46,11 +46,20 @@ const UserAdmin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token');
       if (editId) {
-        await axios.put(`http://localhost:5001/admin/users/${editId}`, formData);
+        await axios.put(`http://localhost:5001/admin/users/${editId}`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
       } else {
         // Changed from /signup to /admin/users for admin user creation
-        await axios.post("http://localhost:5001/admin/users", formData);
+        await axios.post("http://localhost:5001/admin/users", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
       }
       fetchUsers();
       resetForm();
@@ -72,7 +81,12 @@ const UserAdmin = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`http://localhost:5001/admin/users/${id}`);
+        const token = localStorage.getItem('token');
+        await axios.delete(`http://localhost:5001/admin/users/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         fetchUsers();
       } catch (err) {
         setError("Failed to delete user: " + (err.response?.data?.error || err.message));

@@ -138,6 +138,11 @@ useEffect(() => {
                 <Link to="/profile" className="btn btn-outline-light me-2">
                   Profile
                 </Link>
+                {user.role === "admin" && (
+                  <Link to="/admin" className="btn btn-warning me-2">
+                    Admin
+                  </Link>
+                )}
                 <button className="btn btn-danger" onClick={handleLogout}>
                   Logout
                 </button>

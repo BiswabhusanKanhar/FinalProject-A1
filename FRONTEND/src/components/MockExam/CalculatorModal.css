@@ -1,0 +1,102 @@
+.calculator-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.calculator-modal {
+  background-color: #fff;
+  width: 420px;
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.calculator-header {
+  background-color: #343a40;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.calc-body {
+  padding: 1rem;
+}
+
+.calc-screen {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 0.5rem;
+  background-color: #f8f9fa;
+}
+
+.calc-screen.result {
+  background-color: #eaf7ea;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.toggle-mode {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+}
+
+.calc-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.calc-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.calc-row button {
+  flex: 1;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.calc-row button:hover {
+  background-color: #d6d6d6;
+}
+
+.btn-equal {
+  background-color: #28a745 !important;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.btn-equal:hover {
+  background-color: #218838 !important;
+}

@@ -66,10 +66,23 @@ const ExamAdmin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError("No authentication token found. Please log in.");
+        return;
+      }
       if (editId) {
-        await axios.put(`http://localhost:5001/admin/exams/${editId}`, formData);
+        await axios.put(`http://localhost:5001/admin/exams/${editId}`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
       } else {
-        await axios.post("http://localhost:5001/admin/exams", formData);
+        await axios.post("http://localhost:5001/admin/exams", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
       }
       fetchExams();
       resetForm();
@@ -109,7 +122,16 @@ const ExamAdmin = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this exam?")) {
       try {
-        await axios.delete(`http://localhost:5001/admin/exams/${id}`);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError("No authentication token found. Please log in.");
+          return;
+        }
+        await axios.delete(`http://localhost:5001/admin/exams/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         fetchExams();
       } catch (err) {
         setError("Failed to delete exam: " + (err.response?.data?.error || err.message));

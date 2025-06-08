@@ -65,6 +65,11 @@ const QuestionAdmin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No authentication token found. Please log in.");
+        return;
+      }
       const payload = {
         ...formData,
         year: parseInt(formData.year),
@@ -81,9 +86,17 @@ const QuestionAdmin = () => {
       };
 
       if (editId) {
-        await axios.put(`http://localhost:5001/admin/questions/${editId}`, payload);
+        await axios.put(`http://localhost:5001/admin/questions/${editId}`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       } else {
-        await axios.post("http://localhost:5001/admin/questions", payload);
+        await axios.post("http://localhost:5001/admin/questions", payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
       fetchQuestions();
       resetForm();
@@ -120,7 +133,16 @@ const QuestionAdmin = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this question?")) {
       try {
-        await axios.delete(`http://localhost:5001/admin/questions/${id}`);
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("No authentication token found. Please log in.");
+          return;
+        }
+        await axios.delete(`http://localhost:5001/admin/questions/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         fetchQuestions();
       } catch (err) {
         setError("Failed to delete question: " + (err.response?.data?.error || err.message));

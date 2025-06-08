@@ -41,10 +41,23 @@ const NoticeAdmin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError("No authentication token found. Please log in.");
+        return;
+      }
       if (editId) {
-        await axios.put(`http://localhost:5001/admin/notifications/${editId}`, formData);
+        await axios.put(`http://localhost:5001/admin/notifications/${editId}`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
       } else {
-        await axios.post("http://localhost:5001/admin/notifications", formData);
+        await axios.post("http://localhost:5001/admin/notifications", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
       }
       fetchNotices();
       resetForm();
@@ -65,7 +78,17 @@ const NoticeAdmin = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this notice?")) {
       try {
-        await axios.delete(`http://localhost:5001/admin/notifications/${id}`);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError("No authentication token found. Please log in.");
+          return;
+        }
+          
+        await axios.delete(`http://localhost:5001/admin/notifications/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         fetchNotices();
       } catch (err) {
         setError("Failed to delete notice: " + (err.response?.data?.error || err.message));
